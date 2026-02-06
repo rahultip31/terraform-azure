@@ -1,7 +1,7 @@
 name: Deploy Azure VNet using Terraform (Manual)
 
 on:
-  workflow_dispatch:    # Enables manual execution from GitHub Actions UI
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -33,10 +33,12 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan \
-              -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-              -var "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
-              -var "tenant_id=${{ secrets.AZURE_TENANT_ID }}"
+        run: |
+          terraform plan \
+            -out=tfplan \
+            -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            -var "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
+            -var "tenant_id=${{ secrets.AZURE_TENANT_ID }}"
 
       - name: Upload Terraform Plan Artifact
         uses: actions/upload-artifact@v4
@@ -44,11 +46,12 @@ jobs:
           name: tfplan
           path: tfplan
 
+
   # -----------------------------
   # 2) CODE DEPLOY (Terraform Apply)
   # -----------------------------
   code-deploy:
-    needs: code-build     # DEPLOY runs only after BUILD completes manually
+    needs: code-build
     runs-on: ubuntu-latest
 
     steps:
@@ -65,7 +68,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Download Terraform Plan
+      - name: Download Terraform Plan Artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan
