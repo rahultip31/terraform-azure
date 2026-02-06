@@ -46,7 +46,6 @@ jobs:
           name: tfplan
           path: tfplan
 
-
   # -----------------------------
   # 2) CODE DEPLOY (Terraform Apply)
   # -----------------------------
