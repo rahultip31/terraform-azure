@@ -43,8 +43,11 @@ jobs:
       - name: Upload Terraform Plan Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan
-          path: tfplan
+          name: tf-workspace
+          path: |
+            tfplan
+            .terraform/
+            .terraform.lock.hcl
 
   # -----------------------------
   # 2) CODE DEPLOY (Terraform Apply)
@@ -70,7 +73,7 @@ jobs:
       - name: Download Terraform Plan Artifact
         uses: actions/download-artifact@v4
         with:
-          name: tfplan
+          name: tf-workspace
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
